@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Mario Demo</string>
+	<string name="action_settings">Settings</string>
+	<string name="left">LEFT</string>
+	<string name="right">RIGHT</string>
+	<string name="up">UP</string>
+	<string name="down">DOWN</string>
+	<string name="textSize">28sp</string>
+
+</resources>

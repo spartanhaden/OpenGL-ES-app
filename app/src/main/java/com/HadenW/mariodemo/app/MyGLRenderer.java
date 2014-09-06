@@ -442,27 +442,7 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 	}
 
 	private void drawHUD() {
-		Matrix.setIdentityM(mModelMatrix, 0);
-		Matrix.translateM(mModelMatrix, 0, 0f, 0f, 3f);
 
-		GLES20.glEnableVertexAttribArray(mPositionHandle);
-		GLES20.glEnableVertexAttribArray(mNormalHandle);
-		GLES20.glEnableVertexAttribArray(mTextureCoordinateHandle);
-
-		mSquarePackedBuffer.position(0);
-		GLES20.glVertexAttribPointer(mPositionHandle, POSITION_DATA_SIZE, GLES20.GL_FLOAT, false, STRIDE, mSquarePackedBuffer);
-		mSquarePackedBuffer.position(POSITION_DATA_SIZE);
-		GLES20.glVertexAttribPointer(mNormalHandle, NORMAL_DATA_SIZE, GLES20.GL_FLOAT, false, STRIDE, mSquarePackedBuffer);
-		mSquarePackedBuffer.position(POSITION_DATA_SIZE + NORMAL_DATA_SIZE);
-		GLES20.glVertexAttribPointer(mTextureCoordinateHandle, TEXTURE_COORDINATE_DATA_SIZE, GLES20.GL_FLOAT, false, STRIDE, mSquarePackedBuffer);
-
-		Matrix.multiplyMM(mMVPMatrix, 0, mOrthographicMatrix, 0, mModelMatrix, 0);// Multiplies view matrix by model matrix, stores result in MVP matrix (which currently contains model * view).
-		GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mMVPMatrix, 0);// Pass in MVMatrix
-		//Matrix.multiplyMM(mMVPMatrix, 0, mOrthographicMatrix, 0, mMVPMatrix, 0);// Multiplies modelview matrix by projection matrix, stores result in MVP matrix (which now contains model * view * projection)
-		GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);// Pass in combined matrix
-		GLES20.glUniform3f(mLightPosHandle, mLightPosInEyeSpace[0], mLightPosInEyeSpace[1], mLightPosInEyeSpace[2]);// Pass in light position in eye space
-
-		GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
 	}
 
 	private void drawCube(final float x, final float y, final float z) {

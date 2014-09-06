@@ -18,6 +18,7 @@ class MyGLSurfaceView extends GLSurfaceView {
 		setEGLContextClientVersion(2);
 		mRenderer = new MyGLRenderer(context);
 		setRenderer(mRenderer);
+		setRenderMode(RENDERMODE_CONTINUOUSLY);
 	}
 
 	@Override

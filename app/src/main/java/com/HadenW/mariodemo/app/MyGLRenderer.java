@@ -44,6 +44,7 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 	private int mTextureDataHandle;         // This is a handle to our texture data
 	private int squareDataHandle;
 	private int atomDataHandle;
+	private int questionDataHandle;
 	private int pointMVPMatrixHandle;
 	private int pointPositionHandle;
 
@@ -291,6 +292,7 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 		mTextureDataHandle = FileIO.loadTexture(mActivityContext, R.drawable.brick_block);
 		squareDataHandle = FileIO.loadTexture(mActivityContext, R.drawable.robot_cropped);
 		atomDataHandle = FileIO.loadTexture(mActivityContext, R.drawable.atom);
+		questionDataHandle = FileIO.loadTexture(mActivityContext, R.drawable.question_block);
 	}
 
 	public void changeAngle(final float x, final float y) {
@@ -363,6 +365,8 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 			for (int y = 0; y < level[x].length; y++) {
 				if (level[x][y] == 1) {
 					drawCube(x * 2, y * 2, -10f);
+				} else if (level[x][y] == 2) {
+					drawCube(x * 2, y * 2, -10f);
 				}
 			}
 		}
@@ -372,10 +376,15 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 		drawSquare(pX, pY, -11f);
 
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, atomDataHandle);
-		drawHUD();
 
 		GLES20.glUseProgram(mLightShaderHandle);
 		drawLight();
+
+		GLES20.glUseProgram(mUIShaderHandle);
+
+		GLES20.glDisable(GLES20.GL_DEPTH_TEST);
+		drawHUD();
+		GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 	}
 
 	private void setView() {
@@ -442,7 +451,7 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 	}
 
 	private void drawHUD() {
-
+		//Matrix.setIdentityM(mModelMatrix,0);
 	}
 
 	private void drawCube(final float x, final float y, final float z) {

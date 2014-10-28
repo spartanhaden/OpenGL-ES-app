@@ -32,8 +32,8 @@ class MyGLSurfaceView extends GLSurfaceView {
 		float DPadX = 0f;
 		float DPadY = 0f;
 
-		float PedoX = 0f;
-		float PedoY = 0f;
+		float X = 0f;
+		float Y = 0f;
 
 		final float boxSize = 500f;
 
@@ -44,8 +44,8 @@ class MyGLSurfaceView extends GLSurfaceView {
 				DPadX = (rawX - boxSize / 2f) / boxSize;
 				DPadY = (rawY - boxSize / 2f) / boxSize;
 			} else if (rawX > super.getWidth() - boxSize && rawY < boxSize) {
-				PedoX = (rawX - super.getWidth() + boxSize / 2f) / boxSize;
-				PedoY = (rawY - boxSize / 2f) / boxSize;
+				X = (rawX - super.getWidth() + boxSize / 2f) / boxSize;
+				Y = (rawY - boxSize / 2f) / boxSize;
 			} else if (e.getAction() == MotionEvent.ACTION_MOVE) {
 				mRenderer.changeAngle(mPreviousX - x, mPreviousY - y);
 			}
@@ -55,7 +55,7 @@ class MyGLSurfaceView extends GLSurfaceView {
 		}
 		mRenderer.changeX(-DPadX / duller);
 		mRenderer.changeY(DPadY / duller);
-		mRenderer.moveP(PedoX / duller, -PedoY / duller);
+		mRenderer.moveP(X / duller, -Y / duller);
 		mPreviousX = x;
 		mPreviousY = y;
 		return true;

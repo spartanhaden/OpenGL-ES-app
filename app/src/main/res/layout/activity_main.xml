@@ -18,11 +18,19 @@
 			android:orientation="horizontal"
 			android:layout_alignParentBottom="true">
 
+		<TextView
+				android:id="@+id/FPS"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="18sp"
+				android:text="FPS"
+				android:layout_weight="1"/>
+
 		<Button
 				android:id="@+id/left"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:textSize="24sp"
+				android:textSize="18sp"
 				android:text="@string/left"
 				android:layout_weight="1"
 				android:onClick="left"/>
@@ -31,7 +39,7 @@
 				android:id="@+id/up"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:textSize="24sp"
+				android:textSize="18sp"
 				android:text="@string/up"
 				android:layout_weight="1"
 				android:onClick="up"/>
@@ -40,7 +48,7 @@
 				android:id="@+id/down"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:textSize="24sp"
+				android:textSize="18sp"
 				android:text="@string/down"
 				android:layout_weight="1"
 				android:onClick="down"/>
@@ -49,7 +57,7 @@
 				android:id="@+id/right"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:textSize="24sp"
+				android:textSize="18sp"
 				android:text="@string/right"
 				android:layout_weight="1"
 				android:onClick="right"/>

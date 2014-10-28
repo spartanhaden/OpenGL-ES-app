@@ -5,6 +5,8 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
+import android.util.Log;
+import android.widget.TextView;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -44,7 +46,6 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 	private int mTextureDataHandle;         // This is a handle to our texture data
 	private int squareDataHandle;
 	private int atomDataHandle;
-	private int questionDataHandle;
 	private int pointMVPMatrixHandle;
 	private int pointPositionHandle;
 
@@ -59,14 +60,18 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 	private float shiftX = 0;
 	private float shiftY = -8;
 
+	private long timeSinceLastFrame = SystemClock.elapsedRealtime();
+	private long lastFrameTime = SystemClock.elapsedRealtime();
+	private float fps = 0;
+
 	private int[][] level;
 
 	private int totalCubes = 1;
 
-	private Cubes cubes;
-
 	private float pX = 2f;
 	private float pY = 5f;
+
+	TextView textView;
 
 	public MyGLRenderer(final Context context) {
 		mActivityContext = context;
@@ -248,8 +253,6 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 		};
 		mCubePackedBuffer = getPackedBuffer(cubePositionData, cubeNormalData, cubeTextureCoordinateData);
 		mSquarePackedBuffer = getPackedBuffer(squarePositionData, squareNormalData, squareTextureCoordinateData);
-		cubes = new Cubes(getPackedBuffer(cubePositionData, cubeNormalData, cubeTextureCoordinateData));
-		//squareVBO = setupVBO(getPackedBuffer(squarePositionData, squareNormalData, squareTextureCoordinateData));
 
 		GLES20.glClearColor(.5f, .75f, 1f, 0f);
 
@@ -292,7 +295,6 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 		mTextureDataHandle = FileIO.loadTexture(mActivityContext, R.drawable.brick_block);
 		squareDataHandle = FileIO.loadTexture(mActivityContext, R.drawable.robot_cropped);
 		atomDataHandle = FileIO.loadTexture(mActivityContext, R.drawable.atom);
-		questionDataHandle = FileIO.loadTexture(mActivityContext, R.drawable.question_block);
 	}
 
 	public void changeAngle(final float x, final float y) {
@@ -335,9 +337,24 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 		Matrix.orthoM(mOrthographicMatrix, 0, -ratio * orthoSize, ratio * orthoSize, -50f, 50f, near, far);
 	}
 
+	public void initUI(TextView textView) {
+		this.textView = textView;
+	}
+
+	public void showFPS() {
+
+		timeSinceLastFrame = SystemClock.elapsedRealtime() - lastFrameTime;
+		lastFrameTime = SystemClock.elapsedRealtime();
+		fps = 1000f / (float) timeSinceLastFrame;
+		Log.d("FPS", "Frame Length: " + timeSinceLastFrame + "\tFPS: " + fps);
+
+		//textView.setText(fps + " FPS");
+	}
+
 	@Override
 	public void onDrawFrame(GL10 gl) {
-		float angleInDegrees = (360f / 10000f) * ((int) SystemClock.uptimeMillis() % 10000L);
+		showFPS();
+		float angleInDegrees = (36f / 1000f) * ((int) SystemClock.uptimeMillis() % 10000L);
 
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 		GLES20.glUseProgram(mObjectShaderHandle);
@@ -361,15 +378,12 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);// Bind the texture to this unit
 		GLES20.glUniform1i(mTextureUniformHandle, 0);
 
-		for (int x = 0; x < level.length; x++) {
-			for (int y = 0; y < level[x].length; y++) {
-				if (level[x][y] == 1) {
-					drawCube(x * 2, y * 2, -10f);
-				} else if (level[x][y] == 2) {
-					drawCube(x * 2, y * 2, -10f);
-				}
-			}
-		}
+		for (int x = 0; x < level.length; x++)
+			for (int y = 0; y < level[x].length; y++)
+				if (level[x][y] == 1)
+					renderCube(x * 2, y * 2, -10f);
+				else if (level[x][y] == 2)
+					renderCube(x * 2, y * 2, -10f);
 		//cubes.render();
 
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, squareDataHandle);
@@ -378,13 +392,12 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, atomDataHandle);
 
 		GLES20.glUseProgram(mLightShaderHandle);
-		drawLight();
+		renderLight();
 
 		GLES20.glUseProgram(mUIShaderHandle);
-
-		GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-		drawHUD();
-		GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+		//GLES20.glDisable(GLES20.GL_DEPTH_TEST);
+		//Draw HUD
+		//GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 	}
 
 	private void setView() {
@@ -450,11 +463,7 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
 	}
 
-	private void drawHUD() {
-		//Matrix.setIdentityM(mModelMatrix,0);
-	}
-
-	private void drawCube(final float x, final float y, final float z) {
+	private void renderCube(final float x, final float y, final float z) {
 		Matrix.setIdentityM(mModelMatrix, 0);
 		Matrix.translateM(mModelMatrix, 0, x, y, z);
 
@@ -478,7 +487,7 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36);
 	}
 
-	private void drawLight() {
+	private void renderLight() {
 		GLES20.glVertexAttrib3f(pointPositionHandle, mLightPosInModelSpace[0], mLightPosInModelSpace[1], mLightPosInModelSpace[2]);
 		GLES20.glDisableVertexAttribArray(pointPositionHandle);
 

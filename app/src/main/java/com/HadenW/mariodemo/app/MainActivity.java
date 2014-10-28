@@ -7,8 +7,7 @@ import android.view.View;
 
 public class MainActivity extends Activity {
 	private MyGLSurfaceView glSurfaceView;
-	MediaPlayer mediaPlayer;
-
+	private MediaPlayer mediaPlayer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
